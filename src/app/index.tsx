@@ -1,5 +1,7 @@
+import { HugeiconsIcon } from '@hugeicons/react-native';
+import { TwentyFourHoursClockIcon } from '@hugeicons/core-free-icons';
 import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AnimatedIcon } from '@/components/animated-icon';
@@ -8,6 +10,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { WebBadge } from '@/components/web-badge';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { useGetPostsQuery } from '@/store/api';
 
 function getDevMenuHint() {
   if (Platform.OS === 'web') {
@@ -29,15 +32,26 @@ function getDevMenuHint() {
 }
 
 export default function HomeScreen() {
+  const { data: posts, isLoading } = useGetPostsQuery();
+
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <ThemedView style={styles.heroSection}>
+          <HugeiconsIcon icon={TwentyFourHoursClockIcon} size={48} color="#00ff00" />
           <AnimatedIcon />
           <ThemedText type="title" style={styles.title}>
             Welcome to&nbsp;Expo
           </ThemedText>
         </ThemedView>
+
+        {isLoading ? (
+          <ActivityIndicator size="large" />
+        ) : (
+          <ThemedText type="default">
+            Fetched {posts?.length || 0} posts from RTK Query!
+          </ThemedText>
+        )}
 
         <ThemedText type="code" style={styles.code}>
           get started
